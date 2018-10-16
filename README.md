@@ -23,7 +23,13 @@ language: python
 python:
   - "2.7"
   - "3.6"
-script: python test.py
+# command to instinstall:
+install:
+  - pip install numpy
+# commands to run test
+script: 
+  - python test.py
+# condition
 branches:
   only:
     - master
