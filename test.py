@@ -1,3 +1,4 @@
+import numpy as np:
 def fun():
-    print('hi')
+    print(np.linspace(0,1,3))
 
