@@ -27,24 +27,35 @@ os:
  - linux
 sudo: true
 install:
-  - sudo apt-get install nsis
-  - pip install -r requirements.txt
+    #  - sudo apt-get install nsis
+ - pip install -r requirements.txt
 # commands to run test
 script: 
   - python test.py
+  - echo "$TRAVIS_BUILD_NUMBER-$TRAVIS_BRANCH-$TRAVIS_BUILD_ID-$TRAVIS_TAG"
+  - echo "$TRAVIS_JOB_ID-$TRAVIS_JOB_NUMBER-$TRAVIS_BUILD_ID-$TRAVIS_TAG"
+  - echo "$TRAVIS_TAG"
+  - if [[ "$TRAVIS_TAG" == "" ]]; then export $TRAVIS_TAG="dev" ; fi
+  - echo "$TRAVIS_TAG"
 
 before_deploy:
-  - pip install pynsist
-  - make
-  - ls build/nsis/*
+  - echo "$TRAVIS_BUILD_NUMBER-$TRAVIS_BRANCH-$TRAVIS_BUILD_ID-$TRAVIS_TAG"
+  - echo "$TRAVIS_JOB_ID-$TRAVIS_JOB_NUMBER-$TRAVIS_BUILD_ID-$TRAVIS_TAG"
+#  - pip install pynsist
+#  - make
+#  - ls build/nsis/*
 
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   file_glob: true
   file:
-      - build/nsis/*.exe
+      - test.py
   overwrite:  true
+#  name: Build $(date +'%d.%m.%Y %R')
+  target_commitish: $TRAVIS_COMMIT # <--------both used
+  tag_name: $TRAVIS_TAG # <--------both used
+# "${TRAVIS_BUILD_NUMBER}-${TRAVIS_BRANCH}-${TRAVIS_BUILD_ID}"
   skip_cleanup: true
   on:
      tags: true
@@ -63,3 +74,8 @@ deploy:
 # after_deploy:
 #   - ./after_deploy_1.sh
 #   - ./after_deploy_2.sh
+
+# env:
+#   global:
+#     - CAMPFIRE_TOKEN=abc123
+#     - TIMEOUT=1000
