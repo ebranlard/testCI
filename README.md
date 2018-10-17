@@ -3,9 +3,9 @@
 
 
 
-# How to setup Github + Travis-CI + Heroku + ReadTheDocs.io 
+# How to setup Github + Travis-CI + GitHub Release + ReadTheDocs.io 
 
-Github + Travis-CI + Heroku + ReadTheDocs.io
+Github + Travis-CI + HitHub + ReadTheDocs.io
 
 ## Step 1 - Github
 Create a github repository, here assumed to be called `REPO`, under the user `USER`:

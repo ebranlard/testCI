@@ -41,7 +41,11 @@ before_deploy:
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: build/nsis/test*.exe
+  file_glob: true
+  file:
+      - build/nsis/test*.exe
+      - test.py
+  overwrite:  true
   skip_cleanup: true
   on:
      condition: $TRAVIS_PYTHON_VERSION = 3.6
