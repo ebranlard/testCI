@@ -2,6 +2,7 @@ language: minimal
 matrix:
   include:
     - os: linux
+      sudo: true
     - os: windows
     - os: osx
 # command to instinstall:
