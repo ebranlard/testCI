@@ -31,6 +31,6 @@ install:
 # commands to run test
 script: 
   - python test.py
-  - make test.py
+  - make
 
 # install:
