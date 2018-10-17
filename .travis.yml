@@ -27,10 +27,21 @@ os:
 install:
   - sudo apt-get install nsis
   - pip install pynsist
-  - pip install --user -r requirements.txt
+  - pip install -r requirements.txt
 # commands to run test
 script: 
   - python test.py
   - make
 
-# install:
+# before_deploy: "echo 'ready?'"
+# deploy:
+#  provider: heroku
+#   api_key: ...
+#   app: my-app-123
+# run:
+#     - "rake db:migrate"
+#     - restart
+#     - "rake cleanup"
+# after_deploy:
+#   - ./after_deploy_1.sh
+#   - ./after_deploy_2.sh
