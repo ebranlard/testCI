@@ -30,6 +30,7 @@ install:
 # commands to run test
 script: 
   - python test.py
+  - echo $GITHUB_TOKEN
 
 before_deploy:
   - sudo apt-get install nsis
@@ -42,8 +43,6 @@ deploy:
   api_key: $GITHUB_TOKEN
   file: dist\nsis\test*.exe
   skip_cleanup: true
-  on:
-    tags: true
 
 #- make
 # deploy:
