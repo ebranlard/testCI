@@ -3,7 +3,7 @@
 
 
 
-# Test Github + Travis-CI + Heroku + ReadTheDocs.io
+# Hot to setup Github + Travis-CI + Heroku + ReadTheDocs.io 
 
 Github + Travis-CI + Heroku + ReadTheDocs.io
 
@@ -17,13 +17,17 @@ http://github.com/USER/REPO.git
 ## Step 2 - Travis-CI
  - Create an account on travis-ci.org by logging in with your github credentials.
  - Select the github repository you created
- - Add a file `.travis.yml` at the root of your github repository. Example to run a python script test.py with two different versions of python: 
+ - Add a file `.travis.yml` at the root of your github repository. Example to run a python script test.py with two different versions of python is given below. The test script may also be a `make test` command. 
 ```yaml
 language: python
 python:
   - "2.7"
   - "3.6"
-# command to instinstall:
+os:
+  - linux
+  - osx
+  - windows
+# command to install requirements
 install:
   - pip install numpy
 # commands to run test
