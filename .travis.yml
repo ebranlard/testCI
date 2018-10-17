@@ -36,12 +36,12 @@ script:
 before_deploy:
   - pip install pynsist
   - make
-  - ls dist/nsis/*
+  - ls build/nsis/*
 
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: dist/nsis/test*.exe
+  file: build/nsis/test*.exe
   skip_cleanup: true
   on:
      condition: $TRAVIS_PYTHON_VERSION = 3.6
