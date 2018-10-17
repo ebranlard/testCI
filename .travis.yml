@@ -43,10 +43,11 @@ deploy:
   api_key: $GITHUB_TOKEN
   file_glob: true
   file:
-      - build/nsis/test*.exe
+      - build/nsis/*.exe
   overwrite:  true
   skip_cleanup: true
   on:
+     tags: true
      condition: $TRAVIS_PYTHON_VERSION = 3.6
 # name: Build $(date +'%d.%m.%Y %R')
 # "${TRAVIS_BUILD_NUMBER}-${TRAVIS_BRANCH}-${TRAVIS_BUILD_ID}"
