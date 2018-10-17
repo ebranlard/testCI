@@ -7,7 +7,7 @@ matrix:
     - os: osx
 # command to instinstall:
 install:
-  - pip install numpy
+  - pip install --user -r requirements
 # commands to run test
 script: 
   - python test.py
