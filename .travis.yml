@@ -25,7 +25,9 @@ python:
   - "3.6"
 os: 
  - linux
+sudo: true
 install:
+  - sudo apt-get install nsis
   - pip install -r requirements.txt
 # commands to run test
 script: 
@@ -33,7 +35,6 @@ script:
   - echo $GITHUB_TOKEN
 
 before_deploy:
-  - sudo apt-get install nsis
   - pip install pynsist
   - make
   - echo $GITHUB_TOKEN
