@@ -27,8 +27,8 @@ os:
  - linux
 sudo: true
 install:
-    #  - sudo apt-get install nsis
- - pip install -r requirements.txt
+  - sudo apt-get install nsis
+  - pip install -r requirements.txt
 # commands to run test
 script: 
   - python test.py
@@ -36,21 +36,23 @@ script:
 
 before_deploy:
   - export VERSION_NAME=`git describe | sed 's/\(.*\)-.*/\1/'`
-#  - pip install pynsist
-#  - make
-#  - ls build/nsis/*
+  - if [[ "$TRAVIS_TAG" == "dev" ]]; then export VERSION_NAME=$VERSION_NAME"-dev" ; fi
+  - pip install pynsist
+  - make
+  - ls build/nsis/*
 
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
+  skip_cleanup: true
   file_glob: true
   file:
       - test.py
+      - build/*/*.exe
   overwrite:  true
   name: $VERSION_NAME
-  target_commitish: $TRAVIS_COMMIT # <--------both used
-  tag_name: $TRAVIS_TAG # <--------both used
-  skip_cleanup: true
+  target_commitish: $TRAVIS_COMMIT 
+  tag_name: $TRAVIS_TAG 
   on:
      tags: true
      condition: $TRAVIS_PYTHON_VERSION = 3.6
