@@ -1,17 +1,10 @@
 language: python
-# python:
-#   - "2.7"
-#   - "3.6"
-#os: # 
-#  - linux
-#  - osx
-#  - windows
 matrix:
   include:
     - os: linux
       python: "2.7"
     - os: linux
-      python: "3.7"
+      python: "3.6"
 # command to instinstall:
 install:
   - pip install numpy
@@ -23,3 +16,10 @@ branches:
   only:
     - master
 
+# python:
+#   - "2.7"
+#   - "3.6"
+# os: # 
+#  - linux
+#  - osx
+#  - windows
