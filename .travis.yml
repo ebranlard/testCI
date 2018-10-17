@@ -32,18 +32,19 @@ install:
 # commands to run test
 script: 
   - python test.py
-  - echo $GITHUB_TOKEN
 
 before_deploy:
   - pip install pynsist
   - make
-  - echo $GITHUB_TOKEN
+  - ls dist\nsis\*
 
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: dist\nsis\test*.exe
+  file: dist/nsis/test*.exe
   skip_cleanup: true
+  on:
+     condition: $TRAVIS_PYTHON_VERSION = 3.6
 
 #- make
 # deploy:
