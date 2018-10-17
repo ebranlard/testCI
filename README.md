@@ -3,7 +3,7 @@
 
 
 
-# Hot to setup Github + Travis-CI + Heroku + ReadTheDocs.io 
+# How to setup Github + Travis-CI + Heroku + ReadTheDocs.io 
 
 Github + Travis-CI + Heroku + ReadTheDocs.io
 

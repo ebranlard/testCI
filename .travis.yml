@@ -7,7 +7,7 @@ matrix:
     - os: osx
 # command to instinstall:
 install:
-  - pip install --user -r requirements
+  - pip install --user -r requirements.txt
 # commands to run test
 script: 
   - python test.py
