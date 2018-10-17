@@ -1,25 +1,36 @@
-language: minimal
-matrix:
-  include:
-    - os: linux
-      sudo: true
-    - os: windows
-    - os: osx
-# command to instinstall:
+## ---- EXAMPLE 1:  minimal, cross platform
+# language: minimal
+# matrix:
+#   include:
+#     - os: linux
+#       sudo: true
+#     - os: windows
+#     - os: osx
+# # command to instinstall:
+# install:
+#   - pip install --user -r requirements.txt
+# # commands to run test
+# script: 
+#   - python test.py
+# # condition
+# branches:
+#   only:
+#     - master
+
+## ---- EXAMPLE 2: python
+language: python
+python:
+  - "2.7"
+  - "3.6"
+os: 
+ - linux
 install:
+  - sudo apt-get install nsis
+  - pip install pynsist
   - pip install --user -r requirements.txt
 # commands to run test
 script: 
   - python test.py
-# condition
-branches:
-  only:
-    - master
+  - make test.py
 
-# python:
-#   - "2.7"
-#   - "3.6"
-# os: # 
-#  - linux
-#  - osx
-#  - windows
+# install:
