@@ -6,15 +6,53 @@ project (Omnivor)
 
 # Project requirements
 enable_language (Fortran)
-find_package(LAPACK)
+
+# Adding cmake packages
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_inc") 
+
+# SET(LAPACK_LIBRARIES "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl\lib\intel64_lib")
+# set(BLA_VENDOR Intel10_64lp_seq)
+# find_package(BLAS REQUIRED)
+# find_package(LAPACK)
+# find_package(MKL) 
+if (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
+  find_package(MKL)
+endif()
+if (MKL_FOUND)
+  include_directories(${MKL_INCLUDE_DIRS})
+  # --- OPTION 1
+#   set(BLAS_LIBRARIES ${MKL_LIBRARIES})
+#   set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
+#   set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "ifport;ifcore;imf;svml;m;ipgo;intlc;c;irc_s;dl;c")
+  # --- OPTION 2
+  set(CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -Qmkl:sequential")
+  message("----------------------------------------------------------------")
+  message("MKL_FOUND")
+  message("MKL_LIBRARIES      : " ${MKL_LIBRARIES})
+  message("MKL_INCLUDE_DIRS   : " ${MKL_INCLUDE_DIRS})
+  message("----------------------------------------------------------------")
+else()
+  find_package(BLAS REQUIRED)
+  find_package(LAPACK REQUIRED)
+endif()
+
+# MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl"
+
+# SET(Fortran_MKL_LINK_FLAGS    "")
+# SET(Fortran_MKL_LINK_FLAGS    "mkl_lapack95_lp64.lib")
+# SET(Fortran_MKL_COMPILE_FLAGS "/Qmkl:sequential")
+# SET(CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} ${Fortran_MKL_COMPILE_FLAGS}" )
+# SET(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${Fortran_MKL_COMPILE_FLAGS}" )
+# SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Fortran_MKL_LINK_FLAGS} ")
 
 
 # --- Main directories
 get_filename_component (parent_prefix ".." ABSOLUTE)
-set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/current_binary_dir") 
-set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/cmake_binary_dir") 
-set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/project_binary_dir") 
-set(Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran_modules") 
+# set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/current_binary_dir") 
+# set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/cmake_binary_dir") 
+# set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/project_binary_dir") 
+# set(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran_modules") 
+
 
 
 # --- Default options
@@ -43,7 +81,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
 else()
     message("CMAKE_Fortran_FLAGS_DEBUG         : " ${CMAKE_Fortran_FLAGS_DEBUG})
 endif()
-message("Fortran_MODULE_DIRECTORY          : " ${Fortran_MODULE_DIRECTORY})
+message("CMAKE_Fortran_MODULE_DIRECTORY    : " ${CMAKE_Fortran_MODULE_DIRECTORY})
 message("EXECUTABLE_OUTPUT_PATH            : " ${EXECUTABLE_OUTPUT_PATH})
 message("CMAKE_BINARY_DIR                  : " ${CMAKE_BINARY_DIR})
 message("CMAKE_CURRENT_BINARY_DIR          : " ${CMAKE_CURRENT_BINARY_DIR})
@@ -51,7 +89,6 @@ message("PROJECT_BINARY_DIR                : " ${PROJECT_BINARY_DIR})
 message("CMAKE_INSTALL_PREFIX              : " ${CMAKE_INSTALL_PREFIX})
 message("parent_prefix                     : " ${parent_prefix})
 message("----------------------------------------------------------------")
-
 
 
 # --- Purelib
@@ -62,12 +99,21 @@ add_library(purelib_static STATIC ${spurelib})
 # --- Matlib
 file(GLOB smatlib matlib/*.f90)
 add_library(matlib SHARED ${smatlib})
+target_link_libraries(matlib ${LAPACK_LIBRARIES})
 add_library(matlib_static STATIC ${smatlib})
 
 # --- Program test_matlib
-#add_executable(test_matlib ${smatlib} test_prog/test_matlib.f90)
+# add_executable(test_matlib ${smatlib} test_prog/test_matlib.f90)
 add_executable(test_matlib  test_prog/test_matlib.f90)
 target_link_libraries(test_matlib matlib_static)
+
+# --- Program test_lapack_min
+add_executable(test_lapack_min  test_prog/test_lapack_min.f90)
+target_link_libraries(test_lapack_min ${LAPACK_LIBRARIES})
+
+# --- Program test_lapack
+add_executable(test_lapack  test_prog/test_lapack.f90)
+target_link_libraries(test_lapack matlib_static ${LAPACK_LIBRARIES})
 
 # set_target_properties(matlab_static PROPERTIES OUTPUT_NAME MyLib)
 

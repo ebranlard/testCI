@@ -1,8 +1,19 @@
 MAKE=make
 ifeq ($(OS),Windows_NT)
+	OS=Windows
 	suffix=-nmake
 	CMAKE_ARGS=-G"NMake Makefiles"
 	MAKE=nmake
+	LIBEXT='.dll'
+	EXEEXT='.exe'
+else
+    OS=$(shell uname -s)
+    ifeq ($(OS),Linux)
+		LIBEXT='.so'
+		LIBPRE='lib'
+    else ifeq ($(OS),Darwin)
+		LIBEXT='.dylib'
+    endif
 endif
 
 all: compile$(suffix) test
@@ -15,23 +26,21 @@ compile$(suffix): build$(suffix)
 	@echo "------------------------------------------------------------"
 	cd build$(suffix) && cmake $(CMAKE_ARGS) .. && $(MAKE)
 
-
+clean:
+	cd build$(suffix) && $(MAKE) clean
 
 test: testprog testpy
 
 testpy:
 	@echo "------------------------------------------------------------"
-ifeq ($(OS),Windows_NT)
-	python WrapLib.py build-nmake/purelib.dll 
-else
-	python WrapLib.py build/libpurelib.so 
-endif
+	python WrapLib.py build$(suffix)/$(LIBPRE)purelib$(LIBEXT)
 	@echo "------------------------------------------------------------"
 
 testprog:
 	@echo "------------------------------------------------------------"
-ifeq ($(OS),Windows_NT)
-	./build$(suffix)/test_matlib.exe
-else
-	./build/test_matlib
-endif
+	@./build$(suffix)/test_matlib$(EXEEXT)
+	@./build$(suffix)/test_lapack$(EXEEXT)
+	@./build$(suffix)/test_lapack_min$(EXEEXT)
+
+
+
