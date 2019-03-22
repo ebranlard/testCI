@@ -1,14 +1,23 @@
 # CMake project file for Omnivor
 # NOTE:
 # on windows: cmake -G"NMake Makefiles"
+# MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl"
+
 cmake_minimum_required (VERSION 2.6)
 project (Omnivor)
 
 # Project requirements
 enable_language (Fortran)
 
+# --- Default options
+if (NOT CMAKE_BUILD_TYPE)
+  set (CMAKE_BUILD_TYPE RELEASE CACHE STRING "Build options: None Debug Release." FORCE)
+endif (NOT CMAKE_BUILD_TYPE)
+
 # Adding cmake packages
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_inc") 
+
+
 
 # SET(LAPACK_LIBRARIES "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl\lib\intel64_lib")
 # set(BLA_VENDOR Intel10_64lp_seq)
@@ -35,9 +44,6 @@ else()
   find_package(BLAS REQUIRED)
   find_package(LAPACK REQUIRED)
 endif()
-
-# MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl"
-
 # SET(Fortran_MKL_LINK_FLAGS    "")
 # SET(Fortran_MKL_LINK_FLAGS    "mkl_lapack95_lp64.lib")
 # SET(Fortran_MKL_COMPILE_FLAGS "/Qmkl:sequential")
@@ -55,11 +61,6 @@ get_filename_component (parent_prefix ".." ABSOLUTE)
 
 
 
-# --- Default options
-if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE RELEASE CACHE STRING "Build options: None Debug Release." FORCE)
-endif (NOT CMAKE_BUILD_TYPE)
-
 
 
 # --- Compiler dependent flags
@@ -76,6 +77,7 @@ message("CMAKE_PROJECT_NAME                : " ${CMAKE_PROJECT_NAME})
 message("CMAKE_Fortran_COMPILER_ID MATCHES : " ${CMAKE_Fortran_COMPILER_ID})
 
 message("CMAKE_Fortran_FLAGS               : " ${CMAKE_Fortran_FLAGS})
+message("CMAKE_BUILD_TYPE                  : " ${CMAKE_BUILD_TYPE})
 if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
     message("CMAKE_Fortran_FLAGS_RELEASE       : " ${CMAKE_Fortran_FLAGS_RELEASE})
 else()
