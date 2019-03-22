@@ -91,16 +91,16 @@ program test_lapack
     endif
 
     if(max_error_lapack>1e-4) then
-        write(*,'(A,EN13.3E2)'),'[FAIL] Matlib matrix solver - LAPACK solver error:',max_error_lapack
+        write(*,'(A,EN13.3E2)') '[FAIL] Matlib matrix solver - LAPACK solver error:',max_error_lapack
         STOP 1
     elseif(max_error_manu>1e-4) then
-        write(*,'(A,EN13.3E2)'),'[FAIL] Matlib matrix solver - Builtin solver error:',max_error_manu
+        write(*,'(A,EN13.3E2)') '[FAIL] Matlib matrix solver - Builtin solver error:',max_error_manu
         STOP 1
     elseif(max_error_omnivor>1e-4) then
-        write(*,'(A,EN13.3E2)'),'[FAIL] Matlib matrix solver - Omnivor LAPACK solver error:',max_error_omnivor
+        write(*,'(A,EN13.3E2)') '[FAIL] Matlib matrix solver - Omnivor LAPACK solver error:',max_error_omnivor
         STOP 1
     else
-        write(*,'(A,EN13.3E2)'),'[ OK ] Matlib matrix solver - solution accuracy:',max_error_omnivor
+        write(*,'(A,EN13.3E2)') '[ OK ] Matlib matrix solver - solution accuracy:',max_error_omnivor
     endif
 
 
