@@ -3,7 +3,7 @@ from ctypes import *
 import os
 import re
 import numpy as np
-
+import platform
 
 # --------------------------------------------------------------------------------}
 # --- Useful tools to communicate with c library 
@@ -122,14 +122,11 @@ def to_c_bool(var):
 
 
 class WrapLib:
-    raw=[]
-    libpath=''
-    bLibLoaded=False
-    bLibInit=False
 
     def __init__(self,libpath=None):
         self.bDEBUG=0;
         self.libpath =libpath;
+        self.raw=None
         if libpath is not None:
             self.load()
 
@@ -138,27 +135,14 @@ class WrapLib:
 
     def load(self):
         """ Load"""
-        # Loading library
-        if ispc():
-            self.raw = cdll.LoadLibrary(self.libpath)
-            #         libHandle = ctypes.windll.kernel32.LoadLibraryA('mydll.dll')
-            #         lib = ctypes.WinDLL(None, handle=libHandle)
-            #         # Alternative:
-            #         lib = ctypes.cll(file)
-            #         libHandle = lib._handle
-
-        else: #unix
-            self.raw = cdll.LoadLibrary(self.libfile)
-            self.bLibLoaded=true;
+        self.raw=cdll.LoadLibrary(self.libpath)
 
 
     def close(self):
         """ Close library"""
-        if self.bLibLoaded:
-            # Then attempting to unload the library
-            self.bLibLoaded=false;
+        if self.raw is not None:
             del self.raw
-            self.raw=[]
+            self.raw=None
     # --------------------------------------------------------------------------------
     # --- Library call
     # --------------------------------------------------------------------------------
@@ -168,36 +152,59 @@ class WrapLib:
             print(func_call)
         return eval(func_call)(*args)
 
+    def call_db(self,func_name,*args):
+        func_call='self.raw.%s'%func_name
+        settype='self.raw.{}.restype=c_double'.format(func_name)
+        exec(settype)
+        if self.bDEBUG==1:
+            print(func_call)
+        return eval(func_call)(*args)
+
 
 if __name__ == "__main__":
     import sys
+    from ctypes import *
+    #lib = cdll.LoadLibrary(sys.argv[1])
+    #A=lib.purelib_getdb()
+    #print(A)
+    #print(type(A))
+
     if len(sys.argv)>1:
-        print('Called with: ', int(sys.argv[1]))
-        WrapLib(sys.argv[1])
+        print('Loading  : ', sys.argv[1])
+        lib=WrapLib(sys.argv[1])
+        lib.call('purelib_print_version')
 
+        myint = lib.call('purelib_getint')
+        print('>>GetInt  :',myint)
 
-#         nprof=self.call('ip_get',to_c_intp(idb));
-#         if(iprof>nprof):
-#             n=-1
-#             return(false,0,0,0,0)
-#         
-#         n=self.call('ip_get',to_c_intp(idb),to_c_intp(iprof),to_c_intp(igeom),to_c_intp(itype));
-#         if n==-1:
-#             return(false,0,0,0,0)
-#         
-#         x    = zeros(1,n) ;
-#         y    = zeros(1,n) ;
-#         # intent inout variables
-#         x_c    = to_c(x   ) ;
-#         y_c    = to_c(y   ) ;
-#         t_rel_c = to_c(0.0)
-#         s_rel_c = to_c(0.0)
-#         self.call('ip_prof',to_c_intp(idb),to_c_intp(iprof),to_c_intp(igeom),to_c_intp(itype),to_c_intp(n),byref(x_c),byref(y_c),byref(t_rel_c),byref(s_rel_c))
-#         x    = c_to_py(x_c,x) ;
-#         y    = c_to_py(y_c,y) ;
-# 
+        mydb  = lib.call_db('purelib_getdb')
+        print('>>GetDB   :',mydb)
 
+        version='00000000000000000000000000000'
+        lib.call('purelib_get_version',version)
+        print('>> Version:',version)
+
+        res=lib.call('purelib_init','Inputfile.inp')
+        print('>>InitCall:',res==1)
+
+        add = lib.call_db('purelib_add', byref(to_c(12.0)),byref(to_c(100.0))) 
+        print('>>Result  :',add)
+
+        n=4
+        x    = np.zeros(n) ;
+        y    = np.zeros(n) ;
+        z    = np.zeros(n) ;
+        x=x+12
+        y=y+100
+        x_c    = to_c(x) ;
+        y_c    = to_c(y) ;
+        z_c    = to_c(z) ;
+        lib.call('purelib_addvec',byref(x_c),byref(y_c),byref(z_c),to_c_intp(n))
+        x    = c_to_py(x_c,x) ;
+        y    = c_to_py(y_c,y) ;
+        z    = c_to_py(z_c,z) ;
+        print('>>AddVec  :',z)
+ 
     else:
         print('Provide one argument')
-    pass
 #     import sys

@@ -9,6 +9,10 @@ enable_language (Fortran)
 find_package(LAPACK)
 
 
+# default installation
+get_filename_component (parent_prefix ".." ABSOLUTE)
+
+
 # make sure that the default is a RELEASE
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING "Build options: None Debug Release." FORCE)
@@ -16,15 +20,17 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 
 
-file(GLOB sources matlib/*.f90)
+file(GLOB smatlib matlib/*.f90)
+file(GLOB spurelib purelib/*.f90)
 set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/current_binary_dir") 
 set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/cmake_binary_dir") 
 set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/project_binary_dir") 
-
+set(Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran_modules") 
 
 
 message("----------------------------------------------------------------")
-# message("CMAKE_Fortran_COMPILER            : " ${CMAKE_Fortran_COMPILER})
+message("CMAKE_PROJECT_NAME                : " ${CMAKE_PROJECT_NAME})
+# message("CMAKE_Fortran_COMPILER           : " ${CMAKE_Fortran_COMPILER})
 message("CMAKE_Fortran_COMPILER_ID MATCHES : " ${CMAKE_Fortran_COMPILER_ID})
 
 message("CMAKE_Fortran_FLAGS               : " ${CMAKE_Fortran_FLAGS})
@@ -33,37 +39,37 @@ if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
 else()
     message("CMAKE_Fortran_FLAGS_DEBUG         : " ${CMAKE_Fortran_FLAGS_DEBUG})
 endif()
-message("EXECUTABLE_OUTPUT_PATH                : " ${EXECUTABLE_OUTPUT_PATH})
-message("CMAKE_BINARY_DIR                      : " ${CMAKE_BINARY_DIR})
-message("CMAKE_CURRENT_BINARY_DIR              : " ${CMAKE_CURRENT_BINARY_DIR})
-message("PROJECT_BINARY_DIR                    : " ${PROJECT_BINARY_DIR})
-
-message("Souces" ${sources}) 
+message("Fortran_MODULE_DIRECTORY          : " ${Fortran_MODULE_DIRECTORY})
+message("EXECUTABLE_OUTPUT_PATH            : " ${EXECUTABLE_OUTPUT_PATH})
+message("CMAKE_BINARY_DIR                  : " ${CMAKE_BINARY_DIR})
+message("CMAKE_CURRENT_BINARY_DIR          : " ${CMAKE_CURRENT_BINARY_DIR})
+message("PROJECT_BINARY_DIR                : " ${PROJECT_BINARY_DIR})
+message("CMAKE_INSTALL_PREFIX              : " ${CMAKE_INSTALL_PREFIX})
+message("parent_prefix                     : " ${parent_prefix})
 message("----------------------------------------------------------------")
 
-# add_executable(matlib ${sources})
-# target_link_libraries(matlib ${CMAKE_DL_LIBS})
-add_library(matlib SHARED ${sources})
-add_library(matlib_static STATIC ${sources})
+
+# --- Purelib
+add_library(purelib SHARED ${spurelib})
+add_library(purelib_static STATIC ${spurelib})
+
+# --- Matlib
+add_library(matlib SHARED ${smatlib})
+add_library(matlib_static STATIC ${smatlib})
+
+# --- Program test_matlib
+#add_executable(test_matlib ${smatlib} test_prog/test_matlib.f90)
+add_executable(test_matlib  test_prog/test_matlib.f90)
+target_link_libraries(test_matlib matlib_static)
+
 # set_target_properties(matlab_static PROPERTIES OUTPUT_NAME MyLib)
 
-# install(TARGETS matlib EXPORT "${CMAKE_PROJECT_NAME}Libraries"
+#install(TARGETS purelib EXPORT "${CMAKE_PROJECT_NAME}Libraries"
 #   RUNTIME DESTINATION bin
 #   LIBRARY DESTINATION lib
 #   ARCHIVE DESTINATION lib)
 
-# make sure that the default is a RELEASE
-# if (NOT CMAKE_BUILD_TYPE)
-#   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
-#       "Choose the type of build, options are: None Debug Release."
-#       FORCE)
-# endif (NOT CMAKE_BUILD_TYPE)
-# 
-# # default installation
-# get_filename_component (default_prefix ".." ABSOLUTE)
-# set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING
-#       "Choose the installation directory; by default it installs in the NORMA directory."
-#       FORCE)
+# set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING "Choose the installation directory; by default it installs in the  directory." FORCE)
 # 
 # # FFLAGS depend on the compiler
 # get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
