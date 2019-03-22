@@ -8,43 +8,70 @@ module PureLibMain
 contains
     !> Get Double
     real(C_DOUBLE) function purelib_getdb() BIND(C,name='purelib_getdb')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_getdb
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_getdb
+        !DEC$ ENDIF
         purelib_getdb=12.12_C_DOUBLE
     end function
 
     !> Get int
     integer(C_INT) function purelib_getint() BIND(C,name='purelib_getint')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_getint
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_getint
+        !DEC$ ENDIF
         purelib_getint=12
     end function
 
     !> Getting version
     subroutine purelib_get_version(s_c) BIND(C,name='purelib_get_version')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_get_version
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_get_version
+        !DEC$ ENDIF
         character(kind=C_CHAR,len=1),dimension(*), intent(inout) :: s_c
         call fortranstring2c(VERSION,s_c)
     end subroutine
 
     !> Printing version
     subroutine purelib_print_version() BIND(C,name='purelib_print_version')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
+        !DEC$ ENDIF
         write(*,*) 'Version: ',VERSION
     end subroutine
 
     !> Init
     integer(C_INT) function purelib_init(input_file_c) BIND(C,name='purelib_init')
-        !
-        character(kind=C_CHAR,len=1),dimension(*),intent(in)  ::  input_file_c
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_init
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_init
+        !DEC$ ENDIF
+        character(kind=C_CHAR,len=1),dimension(*), intent(in)  ::  input_file_c
         character(len=255)  :: input_file
         call cstring2fortran(input_file_c,input_file)
-        write(*,*)'Init input file:',input_file
+        write(*,*)'Init input file:',trim(input_file)
         purelib_init=1
     end function
 
     !> Add function
     real(C_DOUBLE) function purelib_add(x,y) BIND(C,name='purelib_add')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_add
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_add
+        !DEC$ ENDIF
         real(C_DOUBLE), intent(in) :: x,y
         purelib_add=x+y
     end function
 
     !> Add subroutine
     subroutine purelib_addvec(x,y,add,n) BIND(C,name='purelib_addvec')
+        !DEC$ IF .NOT. DEFINED(__LINUX__)
+        !DEC$ ATTRIBUTES DLLEXPORT :: purelib_addvec
+        !GCC$ ATTRIBUTES DLLEXPORT :: purelib_addvec
+        !DEC$ ENDIF
         integer(C_INT), intent(in) :: n
         real(C_DOUBLE), dimension(n), intent(in) :: x,y
         real(C_DOUBLE), dimension(n), intent(out) :: add

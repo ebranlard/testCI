@@ -172,24 +172,38 @@ if __name__ == "__main__":
     if len(sys.argv)>1:
         print('Loading  : ', sys.argv[1])
         lib=WrapLib(sys.argv[1])
+
+        # Simple call
         lib.call('purelib_print_version')
 
+        # Getting an int
         myint = lib.call('purelib_getint')
         print('>>GetInt  :',myint)
 
+        # Getting a double
         mydb  = lib.call_db('purelib_getdb')
         print('>>GetDB   :',mydb)
-
-        version='00000000000000000000000000000'
+        
+        # Getting a string, option 1:
+        version=create_string_buffer(30)
         lib.call('purelib_get_version',version)
-        print('>> Version:',version)
+        print('>> Version:',version.value)
 
-        res=lib.call('purelib_init','Inputfile.inp')
+        # Getting a string, option 2:
+        version=create_string_buffer(b' '*30)
+        lib.call('purelib_get_version',version)
+        print('>> Version:',version.value)
+
+        # Passing a string
+        inputfile=create_string_buffer(b'Inputfile.inp')
+        res=lib.call('purelib_init',inputfile)
         print('>>InitCall:',res==1)
 
+        # Passing doubles, getting a double
         add = lib.call_db('purelib_add', byref(to_c(12.0)),byref(to_c(100.0))) 
         print('>>Result  :',add)
 
+        # Passing arrays in and out
         n=4
         x    = np.zeros(n) ;
         y    = np.zeros(n) ;

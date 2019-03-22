@@ -1,24 +1,19 @@
-all: compile test
-
-
+MAKE=make
 ifeq ($(OS),Windows_NT)
-build-nmake:
-	@echo "------------------------------------------------------------"
-	mkdir build-nmake
-
-compile-nmake: build-nmake
-	@echo "------------------------------------------------------------"
-	cd build-nmake && cmake -G"NMake Makeilfes" .. && nmake
-else
-build:
-	@echo "------------------------------------------------------------"
-	mkdir build
-
-compile: build
-	@echo "------------------------------------------------------------"
-	cd build && cmake .. && make
+	suffix=-nmake
+	CMAKE_ARGS=-G"NMake Makefiles"
+	MAKE=nmake
 endif
 
+all: compile$(suffix) test
+
+build$(suffix):
+	@echo "------------------------------------------------------------"
+	mkdir build$(suffix)
+
+compile$(suffix): build$(suffix)
+	@echo "------------------------------------------------------------"
+	cd build$(suffix) && cmake $(CMAKE_ARGS) .. && $(MAKE)
 
 
 
@@ -36,7 +31,7 @@ endif
 testprog:
 	@echo "------------------------------------------------------------"
 ifeq ($(OS),Windows_NT)
-	./build/test_matlib
+	./build$(suffix)/test_matlib.exe
 else
-	./build-nmake/test_matlib.exe
+	./build/test_matlib
 endif
