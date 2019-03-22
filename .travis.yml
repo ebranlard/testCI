@@ -47,7 +47,6 @@ deploy:
   skip_cleanup: true
   file_glob: true
   file:
-      - test.py
       - build/*/*.exe
   overwrite:  true
   name: $VERSION_NAME
