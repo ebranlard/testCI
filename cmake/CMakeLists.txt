@@ -9,23 +9,27 @@ enable_language (Fortran)
 find_package(LAPACK)
 
 
-# default installation
+# --- Main directories
 get_filename_component (parent_prefix ".." ABSOLUTE)
+set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/current_binary_dir") 
+set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/cmake_binary_dir") 
+set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/project_binary_dir") 
+set(Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran_modules") 
 
 
-# make sure that the default is a RELEASE
+# --- Default options
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING "Build options: None Debug Release." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 
 
-file(GLOB smatlib matlib/*.f90)
-file(GLOB spurelib purelib/*.f90)
-set(CMAKE_CURRENT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/current_binary_dir") 
-set(CMAKE_BINARY_DIR "${CMAKE_BINARY_DIR}/cmake_binary_dir") 
-set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/project_binary_dir") 
-set(Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran_modules") 
+# --- Compiler dependent flags
+if (CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -DEXTRA -Wno-attributes")
+endif()
+
+
 
 
 message("----------------------------------------------------------------")
@@ -49,11 +53,14 @@ message("parent_prefix                     : " ${parent_prefix})
 message("----------------------------------------------------------------")
 
 
+
 # --- Purelib
+file(GLOB spurelib purelib/*.f90)
 add_library(purelib SHARED ${spurelib})
 add_library(purelib_static STATIC ${spurelib})
 
 # --- Matlib
+file(GLOB smatlib matlib/*.f90)
 add_library(matlib SHARED ${smatlib})
 add_library(matlib_static STATIC ${smatlib})
 
