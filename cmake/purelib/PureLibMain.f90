@@ -4,12 +4,12 @@ module PureLibMain
     implicit none
 
     !character(len=35), parameter :: VERSION = 'v1.1-12.g226d26f'
-    interface 
-        function get_version() 
-            use iso_c_binding
-            character(kind=C_CHAR,len=256) :: get_version
-        end function
-    end interface
+    !interface 
+    !    function get_version() 
+    !        use iso_c_binding
+    !        character(kind=C_CHAR,len=256) :: get_version
+    !    end function
+    !end interface
 
 contains
     !> Get Double
@@ -32,21 +32,23 @@ contains
 
     !> Getting version
     subroutine purelib_get_version(s_c) BIND(C,name='purelib_get_version')
+        use CompileVars, only: VERSION
         !DEC$ IF .NOT. DEFINED(__LINUX__)
         !DEC$ ATTRIBUTES DLLEXPORT :: purelib_get_version
         !GCC$ ATTRIBUTES DLLEXPORT :: purelib_get_version
         !DEC$ ENDIF
         character(kind=C_CHAR,len=1),dimension(*), intent(inout) :: s_c
-        call fortranstring2c(trim(get_version()),s_c)
+        call fortranstring2c(trim(VERSION),s_c)
     end subroutine
 
     !> Printing version
     subroutine purelib_print_version() BIND(C,name='purelib_print_version')
+        use CompileVars, only: VERSION
         !DEC$ IF .NOT. DEFINED(__LINUX__)
         !DEC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
         !GCC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
         !DEC$ ENDIF
-        write(*,*) 'Version: ',get_version()
+        write(*,*) 'Version: ',VERSION
     end subroutine
 
     !> Init

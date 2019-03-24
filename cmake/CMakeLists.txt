@@ -2,6 +2,9 @@
 # NOTE:
 # on windows: cmake -G"NMake Makefiles"
 # MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl"
+# --- Small cmake documentation:
+# include(GetGitRevisionDescription) # to include a cmake file
+# add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}") # to add compile time definitions
 
 cmake_minimum_required (VERSION 2.6)
 project (Omnivor)
@@ -18,10 +21,9 @@ endif (NOT CMAKE_BUILD_TYPE)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_inc") 
 
 # --- Git info into the executable
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(GetGitRevisionDescription)
 git_describe(GIT_DESCRIBE)
-add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}")
+# add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}")
 
 
 
@@ -92,19 +94,23 @@ else()
 endif()
 message("CMAKE_Fortran_MODULE_DIRECTORY    : " ${CMAKE_Fortran_MODULE_DIRECTORY})
 message("EXECUTABLE_OUTPUT_PATH            : " ${EXECUTABLE_OUTPUT_PATH})
-message("CMAKE_BINARY_DIR                  : " ${CMAKE_BINARY_DIR})
-message("CMAKE_CURRENT_BINARY_DIR          : " ${CMAKE_CURRENT_BINARY_DIR})
 message("PROJECT_BINARY_DIR                : " ${PROJECT_BINARY_DIR})
+message("CMAKE_BINARY_DIR                  : " ${CMAKE_BINARY_DIR})
+message("CMAKE_SOURCE_DIR                  : " ${CMAKE_SOURCE_DIR})
+message("CMAKE_CURRENT_SOURCE_DIR          : " ${CMAKE_CURRENT_SOURCE_DIR})
+message("CMAKE_CURRENT_BINARY_DIR          : " ${CMAKE_CURRENT_BINARY_DIR})
 message("CMAKE_INSTALL_PREFIX              : " ${CMAKE_INSTALL_PREFIX})
 message("parent_prefix                     : " ${parent_prefix})
 message("----------------------------------------------------------------")
 
+
+
 # --- Version
-#file(GLOB spurelib purelib/*.f90)
+configure_file(CompileVars_Template.f90 CompileVars.f90)
 
 # --- Purelib
 file(GLOB spurelib purelib/*.f90 )
-set(spurelib ${spurelib} Common.f90)
+set(spurelib ${spurelib} CompileVars.f90)
 add_library(purelib SHARED ${spurelib})
 add_library(purelib_static STATIC ${spurelib})
 
