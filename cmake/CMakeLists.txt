@@ -17,6 +17,12 @@ endif (NOT CMAKE_BUILD_TYPE)
 # Adding cmake packages
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_inc") 
 
+# --- Git info into the executable
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+include(GetGitRevisionDescription)
+git_describe(GIT_DESCRIBE)
+add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}")
+
 
 
 # SET(LAPACK_LIBRARIES "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl\lib\intel64_lib")
@@ -72,6 +78,7 @@ endif()
 
 
 message("----------------------------------------------------------------")
+message("GIT VERSION                       : " ${GIT_DESCRIBE})
 message("CMAKE_PROJECT_NAME                : " ${CMAKE_PROJECT_NAME})
 # message("CMAKE_Fortran_COMPILER           : " ${CMAKE_Fortran_COMPILER})
 message("CMAKE_Fortran_COMPILER_ID MATCHES : " ${CMAKE_Fortran_COMPILER_ID})
@@ -92,9 +99,12 @@ message("CMAKE_INSTALL_PREFIX              : " ${CMAKE_INSTALL_PREFIX})
 message("parent_prefix                     : " ${parent_prefix})
 message("----------------------------------------------------------------")
 
+# --- Version
+#file(GLOB spurelib purelib/*.f90)
 
 # --- Purelib
-file(GLOB spurelib purelib/*.f90)
+file(GLOB spurelib purelib/*.f90 )
+set(spurelib ${spurelib} Common.f90)
 add_library(purelib SHARED ${spurelib})
 add_library(purelib_static STATIC ${spurelib})
 

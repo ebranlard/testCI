@@ -3,7 +3,13 @@ module PureLibMain
     use iso_c_binding
     implicit none
 
-    character(len=35), parameter :: VERSION = 'v1.1-12.g226d26f'
+    !character(len=35), parameter :: VERSION = 'v1.1-12.g226d26f'
+    interface 
+        function get_version() 
+            use iso_c_binding
+            character(kind=C_CHAR,len=256) :: get_version
+        end function
+    end interface
 
 contains
     !> Get Double
@@ -31,7 +37,7 @@ contains
         !GCC$ ATTRIBUTES DLLEXPORT :: purelib_get_version
         !DEC$ ENDIF
         character(kind=C_CHAR,len=1),dimension(*), intent(inout) :: s_c
-        call fortranstring2c(VERSION,s_c)
+        call fortranstring2c(trim(get_version()),s_c)
     end subroutine
 
     !> Printing version
@@ -40,7 +46,7 @@ contains
         !DEC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
         !GCC$ ATTRIBUTES DLLEXPORT :: purelib_print_version
         !DEC$ ENDIF
-        write(*,*) 'Version: ',VERSION
+        write(*,*) 'Version: ',get_version()
     end subroutine
 
     !> Init
