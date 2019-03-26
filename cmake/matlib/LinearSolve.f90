@@ -86,6 +86,7 @@ contains
     !> coefficient matrix [a] from subroutine 'factor'.
     !> The subroutine returns the solution {x} by overwriting b.
     subroutine solve_manu(a, b)
+        !DEC$ ATTRIBUTES DLLEXPORT :: solve_manu
         integer :: i, neqn
         real(MK), dimension(:, :), intent(in) :: a
         real(MK), dimension(:), intent(inout) :: b

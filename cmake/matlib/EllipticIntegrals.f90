@@ -89,7 +89,8 @@ contains
     end subroutine
 
     !subroutine elliptic_ke_c(m,k,e)                           !COMPAQ-COMPILER
-    subroutine elliptic_ke_c(m,k,e) bind(C,name='elliptic_ke')!OTHER-COMPILER
+    subroutine elliptic_ke_c(m,k,e) bind(C,name='elliptic_ke_c')!OTHER-COMPILER
+        !DEC$ ATTRIBUTES DLLEXPORT :: elliptic_ke_c
         use PrecisionMod, only: C_DOUBLE
         real(C_DOUBLE),intent(in)   :: m !< 
         real(C_DOUBLE), intent(out) :: k !< 

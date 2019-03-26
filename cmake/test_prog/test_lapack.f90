@@ -1,5 +1,5 @@
 program test_lapack
-    use LinearSolve
+    use LinearSolve, only: factor, solve
     use PrecisionMod
     implicit none
     real(kind=8), dimension(:),allocatable :: x,b,b2,b3

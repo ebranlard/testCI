@@ -127,14 +127,12 @@ add_library(purelib_static STATIC ${spurelib})
 
 ## --- Matlib
 file(GLOB smatlib matlib/*.f90)
-add_library(matlib SHARED ${smatlib})
-target_link_libraries(matlib ${LAPACK_LIBRARIES})
+add_library(matlib_shared SHARED ${smatlib})
+target_link_libraries(matlib_shared ${LAPACK_LIBRARIES})
+
 add_library(matlib_static STATIC ${smatlib})
 
 #
-# --- Program test_matlib
-add_executable(test_matlib  test_prog/test_matlib.f90)
-target_link_libraries(test_matlib matlib_static)
 
 # --- Program test_lapack_min
 add_executable(test_lapack_min  test_prog/test_lapack_min.f90 )
@@ -144,6 +142,10 @@ target_link_libraries(test_lapack_min ${LAPACK_LIBRARIES})
 # --- Program test_lapack
 add_executable(test_lapack  test_prog/test_lapack.f90)
 target_link_libraries(test_lapack matlib_static ${LAPACK_LIBRARIES})
+
+# --- Program test_matlib
+add_executable(test_matlib  test_prog/test_matlib.f90)
+target_link_libraries(test_matlib matlib_static ${LAPACK_LIBRARIES}) # NOTE: if adding shared library here, nmake will not create a .lib if there are no export statements in the shared library. Also only the exported symbols will be accessible
 
 # set_target_properties(matlab_static PROPERTIES OUTPUT_NAME MyLib)
 

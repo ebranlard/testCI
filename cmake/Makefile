@@ -41,7 +41,7 @@ test: testprog testpy
 testpy:
 	@echo "------------------------------------------------------------"
 	python WrapLib.py $(BUILD_DIR)/$(LIBPRE)purelib$(LIBEXT)
-	python WrapLib.py $(BUILD_DIR)/$(LIBPRE)matlib$(LIBEXT)
+	python WrapLib.py $(BUILD_DIR)/$(LIBPRE)matlib_shared$(LIBEXT)
 	@echo "------------------------------------------------------------"
 
 testprog:
