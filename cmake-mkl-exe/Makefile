@@ -5,16 +5,9 @@ ifeq ($(OS),Windows_NT)
 	CMAKE_ARGS=-G"NMake Makefiles"
 	MAKE=nmake
 	RMDIR=rmdir /S /Q
-	LIBEXT='.dll'
 	EXEEXT='.exe'
 else
     OS=$(shell uname -s)
-    ifeq ($(OS),Linux)
-		LIBEXT='.so'
-		LIBPRE='lib'
-    else ifeq ($(OS),Darwin)
-		LIBEXT='.dylib'
-    endif
 	RMDIR=rm -rf
 endif
 BUILD_DIR=build$(suffix)
@@ -36,19 +29,10 @@ clean:
 purge:
 	$(RMDIR) $(BUILD_DIR)
 
-test: testprog testpy
 
-testpy:
-	@echo "------------------------------------------------------------"
-	python WrapLib.py $(BUILD_DIR)/$(LIBPRE)purelib$(LIBEXT)
-	python WrapLib.py $(BUILD_DIR)/$(LIBPRE)matlib$(LIBEXT)
-	@echo "------------------------------------------------------------"
-
-testprog:
+test:
 	@echo "------------------------------------------------------------"
 	@$(BUILD_DIR)/test_lapack_min$(EXEEXT)
-	@$(BUILD_DIR)/test_matlib$(EXEEXT)
-	@$(BUILD_DIR)/test_lapack$(EXEEXT)
 
 
 

@@ -1,7 +1,7 @@
 # CMake project file for Omnivor
 # NOTE:
 # on windows: cmake -G"NMake Makefiles"
-# MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl"
+# MKLROOT "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl\ "
 # --- Small cmake documentation:
 # include(GetGitRevisionDescription) # to include a cmake file
 # add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}") # to add compile time definitions
@@ -24,9 +24,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_inc")
 include(GetGitRevisionDescription)
 git_describe(GIT_DESCRIBE)
 # add_definitions(-DGIT_VERSION_INFO="${GIT_DESCRIBE}")
-
-
-
 # SET(LAPACK_LIBRARIES "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\mkl\lib\intel64_lib")
 # set(BLA_VENDOR Intel10_64lp_seq)
 # find_package(BLAS REQUIRED)
@@ -39,25 +36,33 @@ if (MKL_FOUND)
   include_directories(${MKL_INCLUDE_DIRS})
   # --- OPTION 1
 #   set(BLAS_LIBRARIES ${MKL_LIBRARIES})
-#   set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
+  set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
 #   set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "ifport;ifcore;imf;svml;m;ipgo;intlc;c;irc_s;dl;c")
   # --- OPTION 2
-  set(CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -Qmkl:sequential")
   message("----------------------------------------------------------------")
   message("MKL_FOUND")
   message("MKL_LIBRARIES      : " ${MKL_LIBRARIES})
   message("MKL_INCLUDE_DIRS   : " ${MKL_INCLUDE_DIRS})
+  message("LAPACK_LIBRARIES   : " ${LAPACK_LIBRARIES}) #<<<< We'll link with static libraries
+  #  set(CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -Qmkl:sequential")
+  #  set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "ifport;ifcore;imf;svml;m;ipgo;intlc;c;irc_s;dl;c")
+  #  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /qoffload-ldopts=-mkl=sequential mkl_sequential.lib mkl_lapack95_lp64.lib ")
+  #  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+    if(WIN32)
+        #        SET(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} mkl_core.lib mkl_intel_lp64.lib  mkl_lapack95_lp64.lib mkl_sequential.lib mkl_rt.lib")
+    endif()
   message("----------------------------------------------------------------")
 else()
   find_package(BLAS REQUIRED)
   find_package(LAPACK REQUIRED)
 endif()
 # SET(Fortran_MKL_LINK_FLAGS    "")
-# SET(Fortran_MKL_LINK_FLAGS    "mkl_lapack95_lp64.lib")
+#SET(Fortran_MKL_EXE_FLAGS    "mkl_lapack95_lp64.lib mkl_rt.lib")
 # SET(Fortran_MKL_COMPILE_FLAGS "/Qmkl:sequential")
 # SET(CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} ${Fortran_MKL_COMPILE_FLAGS}" )
-# SET(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${Fortran_MKL_COMPILE_FLAGS}" )
-# SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Fortran_MKL_LINK_FLAGS} ")
+#SET(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${Fortran_MKL_COMPILE_FLAGS}" )
+# SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${Fortran_MKL_LINK_FLAGS} ")
+#SET(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} ${Fortran_MKL_EXE_FLAGS} ")
 
 
 # --- Main directories
@@ -92,6 +97,12 @@ if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
 else()
     message("CMAKE_Fortran_FLAGS_DEBUG         : " ${CMAKE_Fortran_FLAGS_DEBUG})
 endif()
+
+message("  ")
+message("CMAKE_SHARED_LINKER_FLAGS             : " ${CMAKE_SHARED_LINKER_FLAGS})
+message("CMAKE_EXE_LINKER_FLAGS                : " ${CMAKE_EXE_LINKER_FLAGS})
+message("  ")
+
 message("CMAKE_Fortran_MODULE_DIRECTORY    : " ${CMAKE_Fortran_MODULE_DIRECTORY})
 message("EXECUTABLE_OUTPUT_PATH            : " ${EXECUTABLE_OUTPUT_PATH})
 message("PROJECT_BINARY_DIR                : " ${PROJECT_BINARY_DIR})
@@ -114,20 +125,21 @@ set(spurelib ${spurelib} CompileVars.f90)
 add_library(purelib SHARED ${spurelib})
 add_library(purelib_static STATIC ${spurelib})
 
-# --- Matlib
+## --- Matlib
 file(GLOB smatlib matlib/*.f90)
 add_library(matlib SHARED ${smatlib})
 target_link_libraries(matlib ${LAPACK_LIBRARIES})
 add_library(matlib_static STATIC ${smatlib})
 
+#
 # --- Program test_matlib
-# add_executable(test_matlib ${smatlib} test_prog/test_matlib.f90)
 add_executable(test_matlib  test_prog/test_matlib.f90)
 target_link_libraries(test_matlib matlib_static)
 
 # --- Program test_lapack_min
-add_executable(test_lapack_min  test_prog/test_lapack_min.f90)
+add_executable(test_lapack_min  test_prog/test_lapack_min.f90 )
 target_link_libraries(test_lapack_min ${LAPACK_LIBRARIES})
+
 
 # --- Program test_lapack
 add_executable(test_lapack  test_prog/test_lapack.f90)

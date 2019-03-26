@@ -161,17 +161,15 @@ class WrapLib:
         return eval(func_call)(*args)
 
 
-if __name__ == "__main__":
-    import sys
-    from ctypes import *
-    #lib = cdll.LoadLibrary(sys.argv[1])
-    #A=lib.purelib_getdb()
-    #print(A)
-    #print(type(A))
-
-    if len(sys.argv)>1:
-        print('Loading  : ', sys.argv[1])
-        lib=WrapLib(sys.argv[1])
+# --------------------------------------------------------------------------------}
+# ---  
+# --------------------------------------------------------------------------------{
+def test_lib(libname):
+        print('Loading  : ', libname)
+        lib=WrapLib(libname)
+        if libname.find('matlib')>=0:
+            print('Skipping matlib')
+            return
 
         # Simple call
         lib.call('purelib_print_version')
@@ -218,6 +216,19 @@ if __name__ == "__main__":
         y    = c_to_py(y_c,y) ;
         z    = c_to_py(z_c,z) ;
         print('>>AddVec  :',z)
+
+
+if __name__ == "__main__":
+    import sys
+    from ctypes import *
+    #lib = cdll.LoadLibrary(sys.argv[1])
+    #A=lib.purelib_getdb()
+    #print(A)
+    #print(type(A))
+    if len(sys.argv)>1:
+        libname=sys.argv[1]
+        test_lib(libname)
+
  
     else:
         print('Provide one argument')
